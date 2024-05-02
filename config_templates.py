@@ -1,0 +1,213 @@
+import argparse
+
+config_elliot = """experiment:
+  backend: pytorch
+  data_config:
+    strategy: fixed
+    train_path: ../data/{{0}}/train_indexed.tsv
+    validation_path: ../data/{{0}}/val_indexed.tsv
+    test_path: ../data/{{0}}/test_indexed.tsv
+    side_information:
+      - dataloader: VisualAttribute
+        visual_features: ../data/{{0}}/visual_embeddings_indexed_{batch_size}/{visual_path}
+      - dataloader: TextualAttribute
+        textual_features: ../data/{{0}}/textual_embeddings_indexed_{batch_size}/{textual_path}
+  dataset: {dataset}
+  top_k: 50
+  evaluation:
+    cutoffs: [ 10, 20, 50 ]
+    simple_metrics: [ Recall, Precision, nDCG, HR ]
+  gpu: 0
+  external_models_path: ../external/models/__init__.py
+  models:
+    external.VBPR:
+      meta:
+        hyper_opt_alg: grid
+        verbose: True
+        save_weights: False
+        save_recs: False
+        validation_rate: 10
+        validation_metric: Recall@20
+        restore: False
+      lr: [ 0.0001, 0.0005, 0.001, 0.005, 0.01 ]
+      modalities: ('visual', 'textual')
+      epochs: 200
+      factors: 64
+      batch_size: 1024
+      l_w: [ 1e-5, 1e-2 ]
+      comb_mod: concat
+      loaders: ('VisualAttribute', 'TextualAttribute')
+      seed: 123
+    external.BM3:
+      meta:
+        hyper_opt_alg: grid
+        verbose: True
+        save_weights: False
+        save_recs: False
+        validation_rate: 10
+        validation_metric: Recall@20
+        restore: False
+      lr: [ 0.0001, 0.0005, 0.001, 0.005, 0.01 ]
+      multimod_factors: 64
+      reg_weight: [ 0.1, 0.01 ]
+      cl_weight: 2.0
+      dropout: 0.3
+      n_layers: 2
+      modalities: ('visual', 'textual')
+      loaders: ('VisualAttribute', 'TextualAttribute')
+      epochs: 200
+      factors: 64
+      lr_sched: (1.0,50)
+      batch_size: 1024
+      seed: 123
+    external.FREEDOM:
+      meta:
+        hyper_opt_alg: grid
+        verbose: True
+        save_weights: False
+        save_recs: False
+        validation_rate: 10
+        validation_metric: Recall@20
+        restore: False
+      lr: [ 0.0001, 0.0005, 0.001, 0.005, 0.01 ]
+      factors: 64
+      epochs: 200
+      l_w: [ 1e-5, 1e-2 ]
+      n_layers: 1
+      n_ui_layers: 2
+      top_k: 10
+      factors_multimod: 64
+      modalities: ('visual', 'textual')
+      loaders: ('VisualAttribute', 'TextualAttribute')
+      mw: (0.1,0.9)
+      drop: 0.8
+      lr_sched: (1.0,50)
+      batch_size: 1024
+      seed: 123
+      
+"""
+
+
+config_ducho = """dataset_path: ./local/data/demo_{dataset}
+gpu list: 0
+
+visual:
+    items:
+        input_path: images
+        output_path: visual_embeddings_{batch_size}
+        model: [
+                {{ model_name: ResNet50,  output_layers: avgpool, reshape: [224, 224], preprocessing: zscore, backend: torch, batch_size: {batch_size}}},
+                {{ model_name: ./demos/demo_recsys/MMFashion.pt,  output_layers: avgpool, reshape: [224, 224], preprocessing: zscore, backend: torch, batch_size: {batch_size}}},
+        ]
+
+textual:
+    items:
+        input_path: meta.tsv
+        item_column: asin
+        text_column: description
+        output_path: textual_embeddings_{batch_size}
+        model: [
+            {{ model_name: sentence-transformers/all-mpnet-base-v2,  output_layers: 1, clear_text: False, backend: sentence_transformers, batch_size: {batch_size}}},
+          ]
+
+visual_textual:
+    items:
+        input_path: {{visual: images, textual: meta.tsv}}
+        item_column: asin
+        text_column: description
+        output_path: {{visual: visual_embeddings_{batch_size}, textual: textual_embeddings_{batch_size}}}
+        model: [
+            {{ model_name: openai/clip-vit-base-patch16, backend: transformers, output_layers: 1, batch_size: {batch_size}}},
+        ]
+        
+"""
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Training script for ResNet with BPR.")
+    parser.add_argument('--dataset', choices=['baby', 'office', 'music'], help="Dataset name.", required=True)
+    parser.add_argument('--batch_size', type=int, help="Batch size.", required=True)
+
+
+    args = parser.parse_args()
+
+    # if args.setting == 1:
+    #     visual_path = "torch/ResNet50/avgpool"
+    #     textual_path = "sentence_transformers/sentence-transformers/all-mpnet-base-v2/1"
+    # elif args.setting == 2:
+    #     visual_path = "transformers/openai/clip-vit-base-patch16/1"
+    #     textual_path = "transformers/openai/clip-vit-base-patch16/1"
+    # elif args.setting == 3:
+    #     visual_path = "torch/MMFashion/avgpool"
+    #     textual_path = "sentence_transformers/sentence-transformers/all-mpnet-base-v2/1"
+    # else:
+    #     raise ValueError("setting must be in the range [1, 2, 3]!")
+    
+
+    demo_1 = {
+        "visual_path": "torch/ResNet50/avgpool",
+        "textual_path": "sentence_transformers/sentence-transformers/all-mpnet-base-v2/1"
+    }
+
+    elliot_1 = config_elliot.format(
+        batch_size=args.batch_size,
+        dataset=args.dataset,
+        visual_path=demo_1["visual_path"],
+        textual_path=demo_1["textual_path"]
+        )
+    
+    elliot_dir = f"/home/matteo/Formal-Multimod-Rec/config_files/{args.dataset}_1_{args.batch_size}.yml"
+    with open(elliot_dir, 'w') as conf_file:
+        conf_file.write(elliot_1)
+
+    del elliot_1, demo_1, elliot_dir
+    
+    demo_2 = {
+        "visual_path": "transformers/openai/clip-vit-base-patch16/1",
+        "textual_path": "transformers/openai/clip-vit-base-patch16/1"
+    }
+
+    elliot_2 = config_elliot.format(
+        batch_size=args.batch_size,
+        dataset=args.dataset,
+        visual_path=demo_2["visual_path"],
+        textual_path=demo_2["textual_path"]
+        )
+    
+    elliot_dir = f"/home/matteo/Formal-Multimod-Rec/config_files/{args.dataset}_2_{args.batch_size}.yml"
+    with open(elliot_dir, 'w') as conf_file:
+        conf_file.write(elliot_2)
+
+    del elliot_2, demo_2, elliot_dir
+    
+    demo_3 = {
+        "visual_path": "torch/MMFashion/avgpool",
+        "textual_path": "sentence_transformers/sentence-transformers/all-mpnet-base-v2/1"
+    }
+
+    elliot_3 = config_elliot.format(
+        batch_size=args.batch_size,
+        dataset=args.dataset,
+        visual_path=demo_3["visual_path"],
+        textual_path=demo_3["textual_path"]
+        )
+    
+    elliot_dir = f"/home/matteo/Formal-Multimod-Rec/config_files/{args.dataset}_3_{args.batch_size}.yml"
+    with open(elliot_dir, 'w') as conf_file:
+        conf_file.write(elliot_3)
+
+    del elliot_3, demo_3, elliot_dir
+
+    
+    ducho = config_ducho.format(
+        dataset=args.dataset,
+        batch_size=args.batch_size
+    )
+
+    ducho_dir = f"/home/matteo/Ducho/demos/demo_{args.dataset}/config.yml"
+    with open(ducho_dir, 'w') as conf_file:
+        conf_file.write(ducho)
+
+    # elliot_dir = f"/home/matteo/Formal-Multimod-Rec/config_files/{args.dataset}_{args.setting}_{args.batch_size}.yml"
+    # with open(elliot_dir, 'w') as conf_file:
+    #     conf_file.write(elliot)

@@ -1,0 +1,6 @@
+.idea
+__pycache__
+log
+ducho_logs
+*.zip
+results
