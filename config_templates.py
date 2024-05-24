@@ -97,7 +97,7 @@ visual:
         output_path: visual_embeddings_{batch_size}
         model: [
                 {{ model_name: ResNet50,  output_layers: avgpool, reshape: [224, 224], preprocessing: zscore, backend: torch, batch_size: {batch_size}}},
-                {{ model_name: ./demos/demo_recsys/MMFashion.pt,  output_layers: avgpool, reshape: [224, 224], preprocessing: zscore, backend: torch, batch_size: {batch_size}}},
+                {{ model_name: ./Ducho/demos/demo_recsys/MMFashion.pt,  output_layers: avgpool, reshape: [224, 224], preprocessing: zscore, backend: torch, batch_size: {batch_size}}},
         ]
 
 textual:
@@ -118,32 +118,21 @@ visual_textual:
         output_path: {{visual: visual_embeddings_{batch_size}, textual: textual_embeddings_{batch_size}}}
         model: [
             {{ model_name: openai/clip-vit-base-patch16, backend: transformers, output_layers: 1, batch_size: {batch_size}}},
+            {{ model_name: kakaobrain/align-base, backend: transformers, output_layers: 1, batch_size: {batch_size}}},
+            {{ model_name: BAAI/AltCLIP, backend: transformers, output_layers: 1, batch_size: {batch_size}}},
         ]
         
 """
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Training script for ResNet with BPR.")
+    parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', choices=['baby', 'office', 'music'], help="Dataset name.", required=True)
     parser.add_argument('--batch_size', type=int, help="Batch size.", required=True)
 
 
     args = parser.parse_args()
-
-    # if args.setting == 1:
-    #     visual_path = "torch/ResNet50/avgpool"
-    #     textual_path = "sentence_transformers/sentence-transformers/all-mpnet-base-v2/1"
-    # elif args.setting == 2:
-    #     visual_path = "transformers/openai/clip-vit-base-patch16/1"
-    #     textual_path = "transformers/openai/clip-vit-base-patch16/1"
-    # elif args.setting == 3:
-    #     visual_path = "torch/MMFashion/avgpool"
-    #     textual_path = "sentence_transformers/sentence-transformers/all-mpnet-base-v2/1"
-    # else:
-    #     raise ValueError("setting must be in the range [1, 2, 3]!")
     
-
     demo_1 = {
         "visual_path": "torch/ResNet50/avgpool",
         "textual_path": "sentence_transformers/sentence-transformers/all-mpnet-base-v2/1"
@@ -156,7 +145,7 @@ if __name__ == '__main__':
         textual_path=demo_1["textual_path"]
         )
     
-    elliot_dir = f"/home/matteo/Formal-Multimod-Rec/config_files/{args.dataset}_1_{args.batch_size}.yml"
+    elliot_dir = f"./config_files/{args.dataset}_1_{args.batch_size}.yml"
     with open(elliot_dir, 'w') as conf_file:
         conf_file.write(elliot_1)
 
@@ -174,7 +163,7 @@ if __name__ == '__main__':
         textual_path=demo_2["textual_path"]
         )
     
-    elliot_dir = f"/home/matteo/Formal-Multimod-Rec/config_files/{args.dataset}_2_{args.batch_size}.yml"
+    elliot_dir = f"./config_files/{args.dataset}_2_{args.batch_size}.yml"
     with open(elliot_dir, 'w') as conf_file:
         conf_file.write(elliot_2)
 
@@ -192,11 +181,49 @@ if __name__ == '__main__':
         textual_path=demo_3["textual_path"]
         )
     
-    elliot_dir = f"/home/matteo/Formal-Multimod-Rec/config_files/{args.dataset}_3_{args.batch_size}.yml"
+    elliot_dir = f"./config_files/{args.dataset}_3_{args.batch_size}.yml"
     with open(elliot_dir, 'w') as conf_file:
         conf_file.write(elliot_3)
 
     del elliot_3, demo_3, elliot_dir
+
+    demo_4 = {
+        "visual_path": "transformers/kakaobrain/align-base/1",
+        "textual_path": "transformers/kakaobrain/align-base/1"
+    }
+
+    elliot_4 = config_elliot.format(
+        batch_size=args.batch_size,
+        dataset=args.dataset,
+        visual_path=demo_4["visual_path"],
+        textual_path=demo_4["textual_path"]
+        )
+    
+    elliot_dir = f"./config_files/{args.dataset}_4_{args.batch_size}.yml"
+
+    with open(elliot_dir, 'w') as conf_file:
+        conf_file.write(elliot_4)
+
+    del elliot_4, demo_4, elliot_dir
+    
+    demo_5 = {
+        "visual_path": "transformers/BAAI/AltCLIP/1",
+        "textual_path": "transformers/BAAI/AltCLIP/1"
+    }
+
+    elliot_5 = config_elliot.format(
+        batch_size=args.batch_size,
+        dataset=args.dataset,
+        visual_path=demo_5["visual_path"],
+        textual_path=demo_5["textual_path"]
+        )
+    
+    elliot_dir = f"./config_files/{args.dataset}_5_{args.batch_size}.yml"
+
+    with open(elliot_dir, 'w') as conf_file:
+        conf_file.write(elliot_5)
+
+    del elliot_5, demo_5, elliot_dir
 
     
     ducho = config_ducho.format(
@@ -204,10 +231,6 @@ if __name__ == '__main__':
         batch_size=args.batch_size
     )
 
-    ducho_dir = f"/home/matteo/Ducho/demos/demo_{args.dataset}/config.yml"
+    ducho_dir = f"./Ducho/demos/demo_{args.dataset}/config.yml"
     with open(ducho_dir, 'w') as conf_file:
         conf_file.write(ducho)
-
-    # elliot_dir = f"/home/matteo/Formal-Multimod-Rec/config_files/{args.dataset}_{args.setting}_{args.batch_size}.yml"
-    # with open(elliot_dir, 'w') as conf_file:
-    #     conf_file.write(elliot)
