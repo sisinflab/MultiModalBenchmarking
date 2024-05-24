@@ -4,3 +4,6 @@ log
 ducho_logs
 *.zip
 results
+*.log
+*.out
+*_indexed.tsv

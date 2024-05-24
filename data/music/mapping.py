@@ -83,3 +83,37 @@ if not os.path.exists(textual_embeddings_folder_indexed):
 for key, value in items_map.items():
     np.save(f'{visual_embeddings_folder_indexed}/{value}.npy', np.load(f'{visual_embeddings_folder}/{key}.npy'))
     np.save(f'{textual_embeddings_folder_indexed}/{value}.npy', np.load(f'{textual_embeddings_folder}/{key}.npy'))
+
+
+visual_embeddings_folder = f'visual_embeddings_{args.batch_size}/transformers/kakaobrain/align-base/1'
+textual_embeddings_folder = f'textual_embeddings_{args.batch_size}/transformers/kakaobrain/align-base/1'
+
+visual_embeddings_folder_indexed = f'visual_embeddings_indexed_{args.batch_size}/transformers/kakaobrain/align-base/1'
+textual_embeddings_folder_indexed = f'textual_embeddings_indexed_{args.batch_size}/transformers/kakaobrain/align-base/1'
+
+if not os.path.exists(visual_embeddings_folder_indexed):
+    os.makedirs(visual_embeddings_folder_indexed)
+
+if not os.path.exists(textual_embeddings_folder_indexed):
+    os.makedirs(textual_embeddings_folder_indexed)
+
+for key, value in items_map.items():
+    np.save(f'{visual_embeddings_folder_indexed}/{value}.npy', np.load(f'{visual_embeddings_folder}/{key}.npy'))
+    np.save(f'{textual_embeddings_folder_indexed}/{value}.npy', np.load(f'{textual_embeddings_folder}/{key}.npy'))
+
+
+visual_embeddings_folder = f'visual_embeddings_{args.batch_size}/transformers/BAAI/AltCLIP/1'
+textual_embeddings_folder = f'textual_embeddings_{args.batch_size}/transformers/BAAI/AltCLIP/1'
+
+visual_embeddings_folder_indexed = f'visual_embeddings_indexed_{args.batch_size}/transformers/BAAI/AltCLIP/1'
+textual_embeddings_folder_indexed = f'textual_embeddings_indexed_{args.batch_size}/transformers/BAAI/AltCLIP/1'
+
+if not os.path.exists(visual_embeddings_folder_indexed):
+    os.makedirs(visual_embeddings_folder_indexed)
+
+if not os.path.exists(textual_embeddings_folder_indexed):
+    os.makedirs(textual_embeddings_folder_indexed)
+
+for key, value in items_map.items():
+    np.save(f'{visual_embeddings_folder_indexed}/{value}.npy', np.load(f'{visual_embeddings_folder}/{key}.npy'))
+    np.save(f'{textual_embeddings_folder_indexed}/{value}.npy', np.load(f'{textual_embeddings_folder}/{key}.npy'))
