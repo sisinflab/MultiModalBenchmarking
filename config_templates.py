@@ -97,7 +97,7 @@ visual:
         output_path: visual_embeddings_{batch_size}
         model: [
                 {{ model_name: ResNet50,  output_layers: avgpool, reshape: [224, 224], preprocessing: zscore, backend: torch, batch_size: {batch_size}}},
-                {{ model_name: ./Ducho/demos/demo_recsys/MMFashion.pt,  output_layers: avgpool, reshape: [224, 224], preprocessing: zscore, backend: torch, batch_size: {batch_size}}},
+                {{ model_name: ./demos/demo_{dataset}/MMFashion.pt,  output_layers: avgpool, reshape: [224, 224], preprocessing: zscore, backend: torch, batch_size: {batch_size}}},
         ]
 
 textual:
@@ -123,6 +123,36 @@ visual_textual:
         ]
         
 """
+
+
+split_config = '''
+experiment:
+  backend: pytorch
+  data_config:
+    strategy: dataset
+    dataset_path: ../data/{{0}}/reviews.tsv
+  splitting:
+    save_on_disk: True
+    save_folder: ../data/{{0}}_splits/
+    test_splitting:
+      strategy: random_subsampling
+      test_ratio: 0.2
+    validation_splitting:
+      strategy: random_subsampling
+      test_ratio: 0.1
+  dataset: {dataset}
+  top_k: 20
+  evaluation:
+    cutoffs: [ 10, 20 ]
+    simple_metrics: [ Recall, nDCG ]
+  gpu: 0
+  external_models_path: ../external/models/__init__.py
+  models:
+    MostPop:
+      meta:
+        verbose: True
+        save_recs: True
+'''
 
 
 if __name__ == '__main__':
@@ -225,6 +255,14 @@ if __name__ == '__main__':
 
     del elliot_5, demo_5, elliot_dir
 
+
+
+
+    split_dir = f"./config_files/split_{args.dataset}.yml"
+    with open(split_dir, 'w') as conf_file:
+        conf_file.write(split_config.format(dataset=args.dataset))
+
+    del split_dir
     
     ducho = config_ducho.format(
         dataset=args.dataset,

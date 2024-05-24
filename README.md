@@ -2,7 +2,7 @@
 
 <img src="https://github.com/sisinflab/Formal-MultiMod-Rec/blob/main/framework.png?raw=true"  width="1000">
 
-Official repository for the paper _**Formalizing Multimedia Recommendation through Multimodal Deep Learning**_, under review at TORS.
+Official repository for the paper _**Ducho meets Elliot**_, under review at TORS.
 
 **Authors**
 
@@ -13,7 +13,12 @@ Official repository for the paper _**Formalizing Multimedia Recommendation throu
 - Claudio Pomo (claudio.pomo@poliba.it)
 - Tommaso Di Noia (tommaso.dinoia@poliba.it)
 
-\* _Work performed while at Politecnico di Bari before joining Amazon._
+
+# Running the experiments
+```sh
+cd Ducho
+python3 ./demos/demo_dataset_name/prepare_dataset.py
+```
 
 If you wish to cite our [paper](https://arxiv.org/abs/2309.05273), here is a reference:
 
