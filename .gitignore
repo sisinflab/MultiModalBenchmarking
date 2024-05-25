@@ -7,3 +7,4 @@ results
 *.log
 *.out
 *_indexed.tsv
+.vscode/
