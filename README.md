@@ -17,7 +17,7 @@ Official repository for the paper _**Ducho meets Elliot**_, under review at TORS
 # Clone the repo
 In order to correctly clone the repository and Ducho submodule, clone the repository in this way:
 ```sh
-git clone --recursive https://github.com/sisinflab/MultiModalBenchmarking.git
+git clone --recursive git@github.com:sisinflab/MultiModalBenchmarking.git
 ```
 
 
