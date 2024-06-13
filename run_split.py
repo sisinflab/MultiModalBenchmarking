@@ -4,7 +4,7 @@ from elliot.run import run_experiment
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', choices=['baby', 'office', 'music'], help="Dataset name.", required=True)
+parser.add_argument('--dataset', choices=['baby', 'office', 'music', 'toys', 'beauty'], help="Dataset name.", required=True)
 args = parser.parse_args()
 
 if not (os.path.exists(f'./data/{args.dataset}/train.tsv') and os.path.exists(f'./data/{args.dataset}/val.tsv') and os.path.exists(f'./data/{args.dataset}/test.tsv')):
