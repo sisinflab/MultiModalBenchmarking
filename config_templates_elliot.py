@@ -261,35 +261,6 @@ configs = {
 """
 }
 
-split_config = '''
-experiment:
-  backend: pytorch
-  data_config:
-    strategy: dataset
-    dataset_path: ../data/{{0}}/reviews.tsv
-  splitting:
-    save_on_disk: True
-    save_folder: ../data/{{0}}_splits/
-    test_splitting:
-      strategy: random_subsampling
-      test_ratio: 0.2
-    validation_splitting:
-      strategy: random_subsampling
-      test_ratio: 0.1
-  dataset: {dataset}
-  top_k: 20
-  evaluation:
-    cutoffs: [ 10, 20 ]
-    simple_metrics: [ Recall, nDCG ]
-  gpu: 0
-  external_models_path: ../external/models/__init__.py
-  models:
-    MostPop:
-      meta:
-        verbose: True
-        save_recs: True
-'''
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -392,9 +363,3 @@ if __name__ == '__main__':
         conf_file.write(elliot_5)
 
     del elliot_5, demo_5, elliot_dir
-
-    split_dir = f"./config_files/split_{args.dataset}.yml"
-    with open(split_dir, 'w') as conf_file:
-        conf_file.write(split_config.format(dataset=args.dataset))
-
-    del split_dir
