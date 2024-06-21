@@ -79,7 +79,7 @@ echo "Run experiments"
 
     if header:
         with open(scripts_path + f'/' + f'{"_".join(args.datasets)}_{args.mm_batch_size}_{"_".join(args.models)}.sh', 'w') as f:
-            print(header.format(len(datasets), args.account, args.mail_user), file=f)
+            print(header.format(len(command_lines), args.account, args.mail_user), file=f)
             for current_command_line in command_lines:
                 print(f'{current_command_line}', file=f)
     else:
