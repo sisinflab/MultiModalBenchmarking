@@ -17,7 +17,7 @@ args = parser.parse_args()
 
 
 def main():
-    datasets = args.datasets.split(' ')
+    datasets = args.datasets
     logs_path = 'logs'
     scripts_path = 'scripts'
 

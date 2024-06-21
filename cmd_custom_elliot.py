@@ -18,8 +18,8 @@ args = parser.parse_args()
 
 
 def main():
-    datasets = args.datasets.split(' ')
-    models = args.models.split(' ')
+    datasets = args.datasets
+    models = args.models
     logs_path = 'logs'
     scripts_path = 'scripts'
 
