@@ -8,8 +8,8 @@ PYTHONPATH=. python3 ./demos/demo_$1/run.py > ./ducho_log.txt
 
 cd ..
 
-mv ./Ducho/local/data/demo_$1/visual_embeddings_$2 ./data/$1
-mv ./Ducho/local/data/demo_$1/textual_embeddings_$2 ./data/$1
+cp -rf ./Ducho/local/data/demo_$1/visual_embeddings_$2 ./data/$1
+cp -rf ./Ducho/local/data/demo_$1/textual_embeddings_$2 ./data/$1
 
 
 cp ./Ducho/local/data/demo_$1/reviews.tsv ./data/$1
