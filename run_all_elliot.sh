@@ -1,5 +1,7 @@
 #!/bin/bash
 
+python3 config_templates_elliot.py --dataset $1 --batch_size $2 --model $3
+
 if [ ! -d ./ducho_logs ]; then
   mkdir ./ducho_logs
 fi
